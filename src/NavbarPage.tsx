@@ -21,12 +21,12 @@ class NavbarPage extends Component {
         </Navbar.Header>
         <Navbar.Body>
           <Nav>
-            <Nav.Item>
+            <Nav.Item href='/'>
               <h6>Quick Shift</h6>
             </Nav.Item>
-            <Nav.Item icon={<Icon icon="home" />}>Home</Nav.Item>
-            <Nav.Item>Schedule</Nav.Item>
-            <Nav.Item>Employees</Nav.Item>
+            <Nav.Item href='/home' icon={<Icon icon="home" />}>Home</Nav.Item>
+            <Nav.Item href='/schedule'>Schedule</Nav.Item>
+            <Nav.Item href='/employee'>Employees</Nav.Item>
             <Nav.Item>Skills</Nav.Item>
             <Nav.Item>Adjustments</Nav.Item>
             <Dropdown title="About">

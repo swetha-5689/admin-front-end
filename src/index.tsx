@@ -3,9 +3,7 @@ import "regenerator-runtime";
 
 // import Commure styles
 import "@commure/components-core/lib/style.css";
-import '@fortawesome/fontawesome-free/css/all.min.css'; 
-import 'bootstrap-css-only/css/bootstrap.min.css'; 
-import 'mdbreact/dist/css/mdb.css';
+import 'rsuite/dist/styles/rsuite-dark.css'
 
 // babel-polyfill is a heavy dependency, but we encourage it because many health systems are locked into using Internet Explorer
 import "babel-polyfill";

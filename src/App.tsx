@@ -3,17 +3,23 @@ import SMARTClient from "@commure/smart-core";
 import React from "react";
 import "./App.css";
 import AppHeader from "./NavbarPage";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { smartConfig } from "./config";
+import Home from "./Home";
+import Employee from "./Employee";
 
 const smartClient = new SMARTClient(smartConfig);
 
 function App() {
   return (
     <CommureSmartApp client={smartClient}>
-      <AppHeader />
-      <div className="hello-world-container">
-        <p>Hello world!</p>
-      </div>
+      <Router>
+        <AppHeader />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/employee" component={Employee} />
+        </Switch>
+      </Router>
     </CommureSmartApp>
   );
 }

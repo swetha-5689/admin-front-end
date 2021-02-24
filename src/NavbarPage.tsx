@@ -1,19 +1,7 @@
 import React, { Component } from "react";
-import {
-  MDBNavbar,
-  MDBNavbarBrand,
-  MDBNavbarNav,
-  MDBNavItem,
-  MDBNavbarToggler,
-  MDBCollapse,
-  MDBDropdown,
-  MDBDropdownToggle,
-  MDBDropdownMenu,
-  MDBDropdownItem,
-  MDBIcon,
-} from "mdbreact";
-//import {BrowserRouter} from "react-router-dom";
-import logo from './assets/logo-qs.jpg';
+import logo from "./assets/logo-qs.jpg";
+import { Dropdown, Icon, Nav, Navbar } from "rsuite";
+import { Link } from 'react-router-dom';
 
 
 class NavbarPage extends Component {
@@ -27,26 +15,31 @@ class NavbarPage extends Component {
 
   render() {
     return (
-      <MDBNavbar color='special-color-dark' dark expand="md">
-        <MDBNavbarBrand>
-          <img src={logo} width="40" height="40"/>
-          <strong> Quick Shift </strong>
-        </MDBNavbarBrand>
-        <MDBNavbarToggler onClick={this.toggleCollapse} />
-        <MDBCollapse id="navbarCollapse3" isOpen={this.state.isOpen} navbar>
-          <MDBNavbarNav left>
-            <MDBNavItem>
-              View Employees
-            </MDBNavItem>
-            <MDBNavItem>
-              
-            </MDBNavItem>
-            <MDBNavItem>
-              
-            </MDBNavItem>
-          </MDBNavbarNav>
-        </MDBCollapse>
-      </MDBNavbar>
+      <Navbar>
+        <Navbar.Header>
+          <img src={logo} alt="Quick Shift Logo" width="55" height="55" />
+        </Navbar.Header>
+        <Navbar.Body>
+          <Nav>
+            <Nav.Item>
+              <h6>Quick Shift</h6>
+            </Nav.Item>
+            <Nav.Item icon={<Icon icon="home" />}>Home</Nav.Item>
+            <Nav.Item>Schedule</Nav.Item>
+            <Nav.Item>Employees</Nav.Item>
+            <Nav.Item>Skills</Nav.Item>
+            <Nav.Item>Adjustments</Nav.Item>
+            <Dropdown title="About">
+              <Dropdown.Item>Company</Dropdown.Item>
+              <Dropdown.Item>Team</Dropdown.Item>
+              <Dropdown.Item>Contact</Dropdown.Item>
+            </Dropdown>
+          </Nav>
+          <Nav pullRight>
+            <Nav.Item icon={<Icon icon="avatar" />}>Login</Nav.Item>
+          </Nav>
+        </Navbar.Body>
+      </Navbar>
     );
   }
 }

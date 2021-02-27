@@ -1,5 +1,5 @@
 import React from "react";
-import { PractitionerList } from "./components/PractitionerList";
+import { SkillsList } from "./components/SkillsList";
 
 import "./styles/all.scss";
 import { CommureSmartApp } from "@commure/components-data";
@@ -8,15 +8,15 @@ import { smartConfig } from "./config";
 
 const smartClient = new SMARTClient(smartConfig);
 
-function Employee() {
+function Skills() {
   return (
     <CommureSmartApp client={smartClient}>
       
       <div className="app-container">
-        <PractitionerList />
+        <SkillsList />
       </div>
     </CommureSmartApp>
   );
 }
 
-export default Employee;
+export default Skills;

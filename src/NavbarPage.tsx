@@ -27,7 +27,7 @@ class NavbarPage extends Component {
             <Nav.Item href='/home' icon={<Icon icon="home" />}>Home</Nav.Item>
             <Nav.Item href='/schedule'>Schedule</Nav.Item>
             <Nav.Item href='/employee'>Employees</Nav.Item>
-            <Nav.Item>Skills</Nav.Item>
+            <Nav.Item href='/skills'>Skills</Nav.Item>
             <Nav.Item>Adjustments</Nav.Item>
             <Dropdown title="About">
               <Dropdown.Item>Company</Dropdown.Item>

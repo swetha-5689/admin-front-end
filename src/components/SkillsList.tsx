@@ -29,7 +29,7 @@ export const SkillsList: React.FC = () => (
 
                 Skill: <FhirCodeableConcept value={(skills.code || [])[0]} inline />
                 <br></br>
-                Timing: 
+                Contact: <FhirIdentifier value={(skills.telecom || [])[0]} inline />
                 </p>
                 </li>
               );

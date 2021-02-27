@@ -1,7 +1,7 @@
 import React from "react";
 import { FhirDataQuery } from "@commure/components-data";
 import { Bundle, Practitioner} from "@commure/fhir-types/r4/types";
-import { FhirAddress, FhirContactPointInput, FhirCodeableConcept, FhirCodeInput,  FhirCoding,  FhirDateTime, FhirHumanName, FhirInteger, } from "@commure/components-core";
+import { FhirAddress, FhirContactPointInput, FhirCodeableConcept, FhirCodeInput,  FhirCoding,  FhirDateTime, FhirHumanName, FhirInteger, FhirIdentifier, } from "@commure/components-core";
 
 export const PractitionerList: React.FC = () => (
   <ul className="practitioner-list">
@@ -28,9 +28,9 @@ export const PractitionerList: React.FC = () => (
                 <br></br>
                 Gender: <FhirDateTime value={practitioner.gender} inline />
                 <br></br>
-                Contact: <FhirCodeableConcept value={practitioner.telecom } inline />
+                Contact: <FhirIdentifier value={(practitioner.telecom || [])[0]} inline />
                 <br></br>
-                Address:<FhirAddress value={(practitioner.address || [])[0]} inline />
+                Address: <FhirAddress value={(practitioner.address || [])[0]} inline />
                 </p>
                 </li>
               );

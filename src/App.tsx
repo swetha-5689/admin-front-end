@@ -10,6 +10,7 @@ import Employee from "./Employee";
 import Schedule from "./Schedule";
 import Skills from "./Skills";
 import "./styles/all.scss";
+import Adjustments from "./Adjustments";
 
 const smartClient = new SMARTClient(smartConfig);
 
@@ -25,6 +26,9 @@ function App() {
           <Route exact path="/skills" component={Skills} />
           <Route exact path="/schedule">
             <Schedule />
+          </Route>
+          <Route exact path="/adjustments">
+            <Adjustments />
           </Route>
         </Switch>
       </Router>

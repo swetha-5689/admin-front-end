@@ -28,7 +28,7 @@ class NavbarPage extends Component {
             <Nav.Item href='/schedule'>Schedule</Nav.Item>
             <Nav.Item href='/employee'>Employees</Nav.Item>
             <Nav.Item href='/skills'>Skills</Nav.Item>
-            <Nav.Item>Adjustments</Nav.Item>
+            <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
             <Dropdown title="About">
               <Dropdown.Item>Company</Dropdown.Item>
               <Dropdown.Item>Team</Dropdown.Item>

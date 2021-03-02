@@ -1,22 +1,20 @@
 .practitioner-list {
   list-style-type: none;
   color: rgb(207, 207, 212);
-  max-height: 100vh;
-  overflow-y: auto;
 
   &__item {
     padding: 1em 2em;
-    background-color: rgb(31, 29, 29);
+    background-color: rgb(255, 255, 255);
   }
 
   &__name {
     text-transform: uppercase;
-    color: rgb(207, 207, 212);
+    color: rgb(129, 129, 129);
     margin-bottom: 0.5em;
   }
 
   &__date {
-    color: rgba(247, 244, 243, 0.925);
+    color: rgba(0, 0, 0, 0.925);
     margin: 0;
   }
 }

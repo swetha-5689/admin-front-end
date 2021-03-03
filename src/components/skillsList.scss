@@ -1,21 +1,20 @@
 .skills-list {
-    list-style-type: none;
-    max-height: 100vh;
-    overflow-y: auto;
-  
-    &__item {
-      padding: 1em 2em;
-    }
-  
-    &__name {
-      text-transform: uppercase;
-      color: rgb(0, 0, 0);
-      margin-bottom: 0.5em;
-    }
-  
-    &__date {
-      color: rgba(0, 0, 0, 0.925);
-      margin: 0;
-    }
+  list-style-type: none;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  &__item {
+    padding: 1em 2em;
   }
-  
+
+  &__name {
+    text-transform: uppercase;
+    color: rgb(0, 0, 0);
+    margin-bottom: 0.5em;
+  }
+
+  &__date {
+    color: rgba(0, 0, 0, 0.925);
+    margin: 0;
+  }
+}

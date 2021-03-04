@@ -1,7 +1,7 @@
 import { AppHeader } from "@commure/components-core";
 import React, { useState } from "react";
 import { Nav, Icon, Dropdown } from "rsuite";
-import logo from "./assets/logo-qs.jpg";
+import logo from "./assets/logo-qs.png";
 function Home() {
   const [isOpen, setOpen] = useState(false);
   const toggleCollapse = () => {

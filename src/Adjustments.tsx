@@ -8,7 +8,7 @@ import "@fullcalendar/timegrid/main.css";
 import { INITIAL_EVENTS } from "./data/events";
 import { Dropdown, Icon, Nav } from "rsuite";
 import { AppHeader } from "@commure/components-core";
-import logo from "./assets/logo-qs.jpg";
+import logo from "./assets/logo-qs.png";
 
 const EventsCalendar = () => {
   const [startDate, setStart] = useState(null);

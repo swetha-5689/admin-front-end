@@ -6,7 +6,7 @@ import SMARTClient from "@commure/smart-core";
 import { smartConfig } from "./config";
 import { Dropdown, Icon, Nav } from "rsuite";
 import { AppHeader } from "@commure/components-core";
-import logo from "./assets/logo-qs.jpg";
+import logo from "./assets/logo-qs.png";
 
 const smartClient = new SMARTClient(smartConfig);
 

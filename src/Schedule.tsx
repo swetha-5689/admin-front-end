@@ -1,7 +1,7 @@
 import {getDate} from 'date-fns';
 import React, { useState } from "react";
 import "./Schedule.css";
-import logo from "./assets/logo-qs.jpg";
+import logo from "./assets/logo-qs.png";
 import { Badge, Calendar, Dropdown, Icon, Nav, Popover, Whisper } from "rsuite";
 import { AppHeader } from '@commure/components-core';
 function getTodoList(date: any) {

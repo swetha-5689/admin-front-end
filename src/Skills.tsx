@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SkillsList } from "./components/SkillsList";
-import logo from "./assets/logo-qs.jpg";
+import logo from "./assets/logo-qs.png";
 import "./styles/all.scss";
 import { CommureSmartApp } from "@commure/components-data";
 import SMARTClient from "@commure/smart-core";

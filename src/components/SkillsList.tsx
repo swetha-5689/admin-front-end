@@ -1,9 +1,7 @@
 import React from "react";
 import { FhirDataQuery } from "@commure/components-data";
-import { Bundle, PractitionerRole, Practitioner } from "@commure/fhir-types/r4/types";
-import { FhirAddress, FhirContactPointInput, FhirCodeableConcept, FhirCodeInput,  FhirCoding,  FhirDateTime, FhirHumanName, FhirInteger, FhirIdentifier, ResourceListTable, } from "@commure/components-core";
-import { Table } from 'rsuite';
-const { Column, HeaderCell, Cell, Pagination } = Table;
+import { Bundle, Resource } from "@commure/fhir-types/r4/types";
+import { ResourceListTable } from "@commure/components-core";
 export const SkillsList: React.FC = () => (
   <>
   <FhirDataQuery queryString="PractitionerRole">
@@ -18,16 +16,18 @@ export const SkillsList: React.FC = () => (
     value => value.resource as Resource
   );
   return (
+    <><h3>View Practitioner Roles</h3>
     <ResourceListTable
       resources={skills}
       headerToCellDisplay={{
-        "Name": "practitioner",
+        "Name": "practitioner.display",
         "Skill": "code",
         Specialty: "specialty",
         Contact: "telecom[0].value",
         
       }}
     />
+    </>
   );
 }}
 </FhirDataQuery>

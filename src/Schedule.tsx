@@ -1,7 +1,9 @@
 import {getDate} from 'date-fns';
-import React from "react";
+import React, { useState } from "react";
 import "./Schedule.css";
-import { Badge, Calendar, Popover, Whisper } from "rsuite";
+import logo from "./assets/logo-qs.jpg";
+import { Badge, Calendar, Dropdown, Icon, Nav, Popover, Whisper } from "rsuite";
+import { AppHeader } from '@commure/components-core';
 function getTodoList(date: any) {
     const day = getDate(date);
   switch (day) {
@@ -66,7 +68,26 @@ function renderCell(date: any) {
 }
 
 function Schedule() {
-  return <Calendar bordered renderCell={renderCell} />;
+  const [isOpen, setOpen] = useState(false);
+  const toggleCollapse = () => {
+    setOpen(!isOpen);
+  };
+  return <><AppHeader showFullUserName={true} logo={<Nav>
+    <img src={logo} alt="Quick Shift Logo" width="40" height="40" />
+    <Nav.Item href='/'>
+      <h6>Quick Shift</h6>
+    </Nav.Item>
+    <Nav.Item href='/home' icon={<Icon icon="home" />}>Home</Nav.Item>
+    <Nav.Item href='/schedule' active={true}>Schedule</Nav.Item>
+    <Nav.Item href='/employee'>Employees</Nav.Item>
+    <Nav.Item href='/skills'>Skills</Nav.Item>
+    <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
+    <Dropdown title="About">
+      <Dropdown.Item>Company</Dropdown.Item>
+      <Dropdown.Item>Team</Dropdown.Item>
+      <Dropdown.Item>Contact</Dropdown.Item>
+    </Dropdown>
+  </Nav>}/><Calendar bordered renderCell={renderCell} /></>;
 }
 
 export default Schedule;

@@ -2,7 +2,6 @@ import { CommureSmartApp } from "@commure/components-data";
 import SMARTClient from "@commure/smart-core";
 import React from "react";
 import "./App.scss";
-import AppHeader from "./NavbarPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { smartConfig } from "./config";
 import Home from "./Home";
@@ -18,7 +17,6 @@ function App() {
   return (
     <CommureSmartApp client={smartClient}>
       <Router>
-        <AppHeader />
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />

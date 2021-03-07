@@ -1,12 +1,14 @@
 import { AppHeader } from "@commure/components-core";
 import React, { useState } from "react";
-import { Nav, Icon, Dropdown } from "rsuite";
+import { Nav, Icon, Dropdown, RadioGroup, Carousel, Radio, Divider} from "rsuite";
 import logo from "./assets/logo-qs.png";
 function Home() {
   const [isOpen, setOpen] = useState(false);
   const toggleCollapse = () => {
     setOpen(!isOpen);
   };
+  
+
   return (
     <><AppHeader showFullUserName={true} logo={<Nav>
       <img src={logo} alt="Quick Shift Logo" width="40" height="40" />
@@ -24,8 +26,29 @@ function Home() {
         <Dropdown.Item>Contact</Dropdown.Item>
       </Dropdown>
     </Nav>}/>
-    <div className="hello-world-container">
-      <p>Hello home!</p>
+    <div className="custom-slider">
+    <Carousel autoplay className="custom-slider">
+      <img
+        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=1"
+        height="250"
+      />
+      <img
+        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=2"
+        height="250"
+      />
+      <img
+        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=3"
+        height="250"
+      />
+      <img
+        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=4"
+        height="250"
+      />
+      <img
+        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=5"
+        height="250"
+      />
+    </Carousel> 
     </div>
     </>
   );

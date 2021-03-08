@@ -134,9 +134,8 @@ const EventsCalendar = () => {
               Adjustments
             </Nav.Item>
             <Dropdown title="About">
-              <Dropdown.Item>Company</Dropdown.Item>
-              <Dropdown.Item>Team</Dropdown.Item>
-              <Dropdown.Item>Contact</Dropdown.Item>
+              <Dropdown.Item href='/company'>Company</Dropdown.Item>
+              <Dropdown.Item href='/team'>Team</Dropdown.Item>
             </Dropdown>
           </Nav>
         }

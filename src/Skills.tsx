@@ -27,17 +27,16 @@ function Skills() {
       <Nav.Item href='/skills' active={true}>Skills</Nav.Item>
       <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
       <Dropdown title="About">
-        <Dropdown.Item>Company</Dropdown.Item>
-        <Dropdown.Item>Team</Dropdown.Item>
-        <Dropdown.Item>Contact</Dropdown.Item>
+        <Dropdown.Item href='/company'>Company</Dropdown.Item>
+        <Dropdown.Item href='/team'>Team</Dropdown.Item>
       </Dropdown>
-    </Nav>}/>
-    <CommureSmartApp client={smartClient}>
-      
-      <div className="app-container">
-        <SkillsList />
-      </div>
-    </CommureSmartApp>
+    </Nav>} />
+      <CommureSmartApp client={smartClient}>
+
+        <div className="app-container">
+          <SkillsList />
+        </div>
+      </CommureSmartApp>
     </>
   );
 }

@@ -26,7 +26,7 @@ function Team() {
       <Nav.Item href='/skills'>Skills</Nav.Item>
       <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
       <Dropdown active={true} title="About">
-        <Dropdown.Item>Company</Dropdown.Item>
+        <Dropdown.Item href='/company'>Company</Dropdown.Item>
         <Dropdown.Item href='/team'>Team</Dropdown.Item>
       </Dropdown>
     </Nav>} />
@@ -39,7 +39,7 @@ function Team() {
         <p>
           Team Members:
           <ol>
-            <li>Swetha Angara</li> 
+            <li>Swetha Angara</li>
             <li>Ariela Chomski</li>
             <li>Bracha 'Brooke' Getter</li>
             <li>Neha Nelson</li>

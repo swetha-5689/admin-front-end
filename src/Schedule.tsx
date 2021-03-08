@@ -1,11 +1,11 @@
-import {getDate} from 'date-fns';
+import { getDate } from 'date-fns';
 import React, { useState } from "react";
 import "./Schedule.css";
 import logo from "./assets/logo-qs.png";
 import { Badge, Calendar, Dropdown, Icon, Nav, Popover, Whisper } from "rsuite";
 import { AppHeader } from '@commure/components-core';
 function getTodoList(date: any) {
-    const day = getDate(date);
+  const day = getDate(date);
   switch (day) {
     case 10:
       return [
@@ -83,11 +83,10 @@ function Schedule() {
     <Nav.Item href='/skills'>Skills</Nav.Item>
     <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
     <Dropdown title="About">
-      <Dropdown.Item>Company</Dropdown.Item>
-      <Dropdown.Item>Team</Dropdown.Item>
-      <Dropdown.Item>Contact</Dropdown.Item>
+      <Dropdown.Item href='/company'>Company</Dropdown.Item>
+      <Dropdown.Item href='/team'>Team</Dropdown.Item>
     </Dropdown>
-  </Nav>}/><Calendar bordered renderCell={renderCell} /></>;
+  </Nav>} /><Calendar bordered renderCell={renderCell} /></>;
 }
 
 export default Schedule;

@@ -1,6 +1,6 @@
 import { AppHeader } from "@commure/components-core";
 import React, { useState } from "react";
-import { Nav, Icon, Dropdown, RadioGroup, Carousel, Radio, Divider} from "rsuite";
+import { Nav, Icon, Dropdown, RadioGroup, Carousel} from "rsuite";
 import logo from "./assets/logo-qs.png";
 function Home() {
   const [isOpen, setOpen] = useState(false);

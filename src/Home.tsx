@@ -2,11 +2,17 @@ import { AppHeader } from "@commure/components-core";
 import React, { useState } from "react";
 import { Nav, Icon, Dropdown, RadioGroup, Carousel} from "rsuite";
 import logo from "./assets/logo-qs.png";
+import picture1 from "./assets/Frame13.png";
+import picture2 from "./assets/Frame14.png";
+import picture3 from "./assets/Frame15.png";
+
 function Home() {
   const [isOpen, setOpen] = useState(false);
   const toggleCollapse = () => {
     setOpen(!isOpen);
-  };
+  }
+  
+  ;
   
 
   return (
@@ -28,13 +34,13 @@ function Home() {
     <div className="custom-slider">
     <Carousel autoplay className="custom-slider">
       <img data-interval={3000}
-        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=1"
+        src={picture1}
       />
       <img data-interval={3000}
-        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=1"
+        src={picture2}
       />
       <img data-interval={3000}
-        src="https://via.placeholder.com/600x250/8f8e94/FFFFFF?text=1"
+        src={picture3}
       />
     </Carousel> 
     </div>

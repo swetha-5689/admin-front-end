@@ -10,6 +10,8 @@ import Schedule from "./Schedule";
 import Skills from "./Skills";
 import "./styles/all.scss";
 import Adjustments from "./Adjustments";
+import Team from "./Team";
+import Company from "./Company";
 
 const smartClient = new SMARTClient(smartConfig);
 
@@ -28,6 +30,8 @@ function App() {
           <Route exact path="/adjustments">
             <Adjustments />
           </Route>
+          <Route exact path="/team" component={Team} />
+          <Route exact path="/company" component={Company} />
         </Switch>
       </Router>
     </CommureSmartApp>

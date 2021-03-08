@@ -3,12 +3,14 @@ let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of tod
 export const INITIAL_EVENTS: EventInput[] = [
     {
       id: '1',
-      title: 'All-day event',
+      title: 'John Smith',
+      description: '1 3456',
       start: todayStr
     },
     {
       id: '2',
-      title: 'Timed event',
+      title: 'Jane Doe',
+      description: '1 343546',
       start: todayStr + 'T12:00:00'
     }
   ]

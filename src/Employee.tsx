@@ -33,10 +33,7 @@ function Employee() {
       </Dropdown>
     </Nav>}/>
     <CommureSmartApp client={smartClient}>
-      
-      <div className="app-container">
         <PractitionerList />
-      </div>
     </CommureSmartApp>
     </>
   );

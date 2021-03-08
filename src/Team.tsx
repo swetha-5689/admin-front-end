@@ -3,7 +3,7 @@ import { PractitionerList } from "./components/PractitionerList";
 import "./styles/all.scss";
 import SMARTClient from "@commure/smart-core";
 import { smartConfig } from "./config";
-import { Dropdown, Icon, Nav } from "rsuite";
+import { Dropdown, FlexboxGrid, Icon, Nav } from "rsuite";
 import { AppHeader } from "@commure/components-core";
 import logo from "./assets/logo-qs.png";
 
@@ -27,22 +27,24 @@ function Team() {
       <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
       <Dropdown active={true} title="About">
         <Dropdown.Item>Company</Dropdown.Item>
-        <Dropdown.Item  href='/team'>Team</Dropdown.Item>
+        <Dropdown.Item href='/team'>Team</Dropdown.Item>
       </Dropdown>
     </Nav>} />
       <div>
-        <h1>
-          BEST CAPSTONE 2020 [S21-17]
-        </h1>
+        <FlexboxGrid justify='center'>
+          <h1>
+            BEST CAPSTONE 2020 [S21-17]
+                </h1>
+        </FlexboxGrid>
         <p>
           Team Members:
-          <ul>
-            <li>Swetha Angara</li>
+          <ol>
+            <li>Swetha Angara</li> 
             <li>Ariela Chomski</li>
             <li>Bracha 'Brooke' Getter</li>
             <li>Neha Nelson</li>
             <li>Param Patel</li>
-          </ul>
+          </ol>
         </p>
       </div>
     </>

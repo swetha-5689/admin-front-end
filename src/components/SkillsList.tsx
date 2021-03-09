@@ -23,8 +23,7 @@ export const SkillsList: React.FC = () => (
         "Name": "practitioner.display",
         "Skill": "code",
         Specialty: "specialty",
-        Contact: "telecom[0].value",
-        
+        Contact: "telecom[0].value"        
       }}
     />
     </>

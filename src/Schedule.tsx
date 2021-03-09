@@ -4,6 +4,9 @@ import "./Schedule.css";
 import logo from "./assets/logo-qs.png";
 import { Badge, Calendar, Dropdown, Icon, Nav, Popover, Whisper } from "rsuite";
 import { AppHeader } from '@commure/components-core';
+import { PractitionerList } from './components/PractitionerList';
+import PractitionerService from './ScheduleService';
+import ScheduleService from './ScheduleService';
 function getTodoList(date: any) {
   const day = getDate(date);
   switch (day) {
@@ -86,7 +89,9 @@ function Schedule() {
       <Dropdown.Item href='/company'>Company</Dropdown.Item>
       <Dropdown.Item href='/team'>Team</Dropdown.Item>
     </Dropdown>
-  </Nav>} /><Calendar bordered renderCell={renderCell} /></>;
+  </Nav>} />
+    <ScheduleService />
+  </>;
 }
 
 export default Schedule;

@@ -214,6 +214,7 @@ const EventsCalendar = () => {
                 <Nav.Item eventKey="edit">Edit</Nav.Item>
                 <Nav.Item eventKey="delete">Delete</Nav.Item>
               </Nav>
+              <br></br>
               <p>Are you sure you want to delete this shift?</p>
             </>
           )}

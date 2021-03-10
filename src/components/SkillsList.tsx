@@ -3,7 +3,7 @@ import { FhirDataQuery } from "@commure/components-data";
 import { Bundle, Resource } from "@commure/fhir-types/r4/types";
 import { ResourceListTable } from "@commure/components-core";
 export const SkillsList: React.FC = () => (
-  <>
+  <><h2>View Practitioner Roles</h2>
   <FhirDataQuery queryString="PractitionerRole">
 {({ data, error, loading }) => {
    if (loading) {
@@ -16,8 +16,8 @@ export const SkillsList: React.FC = () => (
     value => value.resource as Resource
   );
   return (
-    <><h3>View Practitioner Roles</h3>
-    <ResourceListTable
+    <>
+    <ResourceListTable 
       resources={skills}
       headerToCellDisplay={{
         "Name": "practitioner.display",

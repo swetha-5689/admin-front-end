@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "./Schedule.css";
+import "./Requests.css";
 import logo from "./assets/logo-qs.png";
 import { Button, Dropdown, Icon, Modal, Nav } from "rsuite";
 import { AppHeader, ResourceListTable } from "@commure/components-core";
 import "./ScheduleService.scss";
 import { FhirDataQuery } from "@commure/components-data";
 import { Bundle, Resource } from "@commure/fhir-types/r4/types";
-function Schedule() {
+function Requests() {
   const [isOpen, setOpen] = useState(false);
   const [modalVal, setModalVal] = useState(false);
   const modalClose = () => {
@@ -40,8 +40,8 @@ function Schedule() {
             <Nav.Item href="/home" icon={<Icon icon="home" />}>
               Home
             </Nav.Item>
-            <Nav.Item href="/schedule" active={true}>
-              Schedule
+            <Nav.Item href="/requests" active={true}>
+              Requests
             </Nav.Item>
             <Nav.Item href="/employee">Employees</Nav.Item>
             <Nav.Item href="/skills">Skills</Nav.Item>
@@ -112,4 +112,4 @@ function Schedule() {
   );
 }
 
-export default Schedule;
+export default Requests;

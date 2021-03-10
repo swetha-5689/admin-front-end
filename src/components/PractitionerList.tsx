@@ -17,7 +17,7 @@ export const PractitionerList: React.FC = () => (
       value => value.resource as Resource
     );
     return (
-      <ResourceListTable
+      <ResourceListTable className="full-table"
         resources={practitioners}
         headerToCellDisplay={{
           "Name": "name",

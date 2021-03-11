@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import "./Requests.css";
 import logo from "./assets/logo-qs.png";
 import { Button, Dropdown, Icon, Modal, Nav } from "rsuite";
-import { AppHeader, ResourceListTable } from "@commure/components-core";
+import { AppHeader, FhirHumanName, ResourceListTable } from "@commure/components-core";
 import "./ScheduleService.scss";
 import { FhirDataQuery } from "@commure/components-data";
-import { Bundle, Resource } from "@commure/fhir-types/r4/types";
+import { Bundle, Practitioner, Resource, Schedule } from "@commure/fhir-types/r4/types";
 function Requests() {
   const [isOpen, setOpen] = useState(false);
   const [modalVal, setModalVal] = useState(false);
@@ -26,6 +26,7 @@ function Requests() {
     setModal(false);
     modalOpen();
   }
+
   
   return (
     <>
@@ -61,20 +62,29 @@ function Requests() {
           if (error) {
             return "Error loading data!";
           }
-          let schedules: Resource[];
-          if ((data as Bundle).entry === undefined) schedules = [];
+          let resources: Resource[];
+          if ((data as Bundle).entry === undefined) resources = [];
           else {
-            schedules = (data as Bundle).entry!.map(
+            resources = (data as Bundle).entry!.map(
               (value) => value.resource as Resource
             );
           }
+          let practMap = new Map();
+          resources.forEach((val) =>{
+            if (val.resourceType === 'Practitioner') {
+              practMap.set('Practitioner/' + val.id, (val as Practitioner).name);
+            }
+          })
+          let schedules = resources.filter((val) => {return val.resourceType != "Practitioner"})
 
           return (
             <ResourceListTable
               className="full-table"
               resources={schedules}
               headerToCellDisplay={{
-                Practitioner: "name",
+                Practitioner: (_schedule: Schedule) => (
+                  <><FhirHumanName value={practMap.get(_schedule.actor[0].reference)[0]}></FhirHumanName></>
+                ),
                 Status: "active",
                 "Time Start": "planningHorizon.start",
                 "Time End": "planningHorizon.end",

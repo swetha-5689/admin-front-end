@@ -54,7 +54,7 @@ function Requests() {
           </Nav>
         }
       />
-      <FhirDataQuery queryString="Practitioner?_has:Schedule:actor:active=true&_revinclude=Schedule:actor">
+      <FhirDataQuery queryString="Practitioner?_revinclude=Schedule:actor">
         {({ data, error, loading }) => {
           if (loading) {
             return "Loading...";
@@ -70,12 +70,12 @@ function Requests() {
             );
           }
           let practMap = new Map();
-          resources.forEach((val) =>{
+          resources.forEach((val) => {
             if (val.resourceType === 'Practitioner') {
               practMap.set('Practitioner/' + val.id, (val as Practitioner).name);
             }
           })
-          let schedules = resources.filter((val) => {return val.resourceType != "Practitioner"})
+          let schedules = resources.filter((val) => {return val.resourceType != "Practitioner"});
 
           return (
             <ResourceListTable
@@ -83,8 +83,7 @@ function Requests() {
               resources={schedules}
               headerToCellDisplay={{
                 Practitioner: (_schedule: Schedule) => (
-                  <><FhirHumanName value={practMap.get(_schedule.actor[0].reference)[0]}></FhirHumanName></>
-                  
+                  <><FhirHumanName value={practMap.get(_schedule.actor[0].reference)[0]} /></>
                 ),
                 Status: "active",
                 "Time Start": "planningHorizon.start",

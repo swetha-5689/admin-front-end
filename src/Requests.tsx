@@ -84,6 +84,7 @@ function Requests() {
               headerToCellDisplay={{
                 Practitioner: (_schedule: Schedule) => (
                   <><FhirHumanName value={practMap.get(_schedule.actor[0].reference)[0]}></FhirHumanName></>
+                  
                 ),
                 Status: "active",
                 "Time Start": "planningHorizon.start",

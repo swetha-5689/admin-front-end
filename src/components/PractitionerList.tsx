@@ -20,11 +20,13 @@ export const PractitionerList: React.FC = () => (
               (value) => value.resource as Resource
             );
           }
+          console.log(resources)
           let practMap = new Map();
           resources.forEach((val) =>{
             if (val.resourceType === 'PractitionerRole') {
-              practMap.set('Practitioner/' + val.id, (val as PractitionerRole).specialty);
-              console.log((val as PractitionerRole).specialty);
+              let id = (val as PractitionerRole).practitioner?.reference;
+              id = id?.split('/')[1]
+              practMap.set(id, (val as PractitionerRole).specialty);
             }
           })
           let specialty = resources.filter((val) => {return val.resourceType != "PractitionerRole"})
@@ -33,13 +35,12 @@ export const PractitionerList: React.FC = () => (
       <ResourceListTable className="full-table"
         resources={specialty}
         headerToCellDisplay={{
+          "Name": "name",
+          ID: "identifier[0].value",
           Specialty: (_pract: Practitioner) => (
-            <><FhirCodeableConcept value={practMap.get(_pract.id).display[0]}></FhirCodeableConcept></>
+            practMap.get(_pract.id) != null && <><FhirCodeableConcept value={practMap.get(_pract.id)[0]}></FhirCodeableConcept></>
             
           ),
-          "Name": "name",
-
-          ID: "identifier[0].value",
           Gender: "gender",
           Contact: "telecom[0].value",
           Address: ["address"]

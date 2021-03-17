@@ -129,7 +129,6 @@ const EventsCalendar = () => {
             </Nav.Item>
             <Nav.Item href="/requests">Requests</Nav.Item>
             <Nav.Item href="/employee">Employees</Nav.Item>
-            <Nav.Item href="/skills">Skills</Nav.Item>
             <Nav.Item href="/adjustments" active={true}>
               Adjustments
             </Nav.Item>

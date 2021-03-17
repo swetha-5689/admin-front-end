@@ -24,7 +24,7 @@ function Home() {
       <Nav.Item href='/home' active={true} icon={<Icon icon="home" />}>Home</Nav.Item>
       <Nav.Item href='/requests'>Requests</Nav.Item>
       <Nav.Item href='/employee'>Employees</Nav.Item>
-      <Nav.Item href='/skills'>Skills</Nav.Item>
+      
       <Nav.Item href='/adjustments'>Adjustments</Nav.Item>
       <Dropdown title="About">
         <Dropdown.Item href='/company'>Company</Dropdown.Item>

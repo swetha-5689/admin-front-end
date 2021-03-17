@@ -7,7 +7,7 @@ import { smartConfig } from "./config";
 import Home from "./Home";
 import Employee from "./Employee";
 import Requests from "./Requests";
-import Skills from "./Skills";
+
 import "./styles/all.scss";
 import Adjustments from "./Adjustments";
 import Team from "./Team";
@@ -23,7 +23,6 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />
           <Route exact path="/employee" component={Employee} />
-          <Route exact path="/skills" component={Skills} />
           <Route exact path="/requests">
             <Requests />
           </Route>

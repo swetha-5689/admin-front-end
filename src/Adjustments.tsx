@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar, {
   CalendarApi,
   DateSelectArg,
@@ -21,31 +21,74 @@ import {
   Icon,
   Modal,
   Nav,
+  SelectPicker,
 } from "rsuite";
-import { AppHeader } from "@commure/components-core";
+import { AppHeader, FhirHumanName } from "@commure/components-core";
 import logo from "./assets/logo-qs.png";
 import { EventClickArg } from "@fullcalendar/core";
+import { Bundle, Practitioner, Resource } from "@commure/fhir-types/r4/types";
+import {
+  FhirDataQueryConsumer,
+  withFhirDataQuery,
+} from "@commure/components-data";
 
-const EventsCalendar = () => {
+const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const [count, setCount] = useState(1);
   const [isOpen, setOpen] = useState(false);
   const [modalVal, setModalVal] = useState("A");
   const [active, setActive] = useState("edit");
+  const [practNames, setPract] = useState([{ label: '' }]);
   const [selectionInfo, setSelectionInfo] = useState<DateSelectArg | undefined>(
     undefined
   );
   const [calendarApi, setCalApi] = useState<CalendarApi | undefined>(undefined);
   const [shiftDetails, setShiftDetails] = useState({
-    employee: "",
     id: "",
-    contact: "",
   });
   const [currEvent, setEvent] = useState<EventApi | undefined>(undefined);
+  const [practMap, setPractMap] = useState<Map<string | undefined, Practitioner>>();
+  const { query } = props;
+  const [bundle, setBundle] = useState<Bundle | undefined>(undefined);
+
+  useEffect(() => {
+    query("Practitioner")
+      .then((response: Response) => response.clone().json())
+      .then((data) => setBundle(data));
+  }, [query]);
+
+  function practitionerSet() {
+    let resources: Practitioner[];
+    if (!bundle) resources = [];
+    else {
+      resources = bundle.entry!.map((value) => value.resource as Practitioner);
+      let records = [
+        {
+          label: (resources[0] as Practitioner).name![0].given![0] + ' ' + (resources[0] as Practitioner).name![0].family,
+          value: (resources[0] as Practitioner).id
+        },
+      ];
+      let map = new Map<string | undefined, Practitioner>();
+      resources?.forEach((val, ind, arr) => {
+        map.set((val as Practitioner)?.id, (val as Practitioner));
+        if (ind >= 1)
+          records.push({
+            label: (val as Practitioner).name![0].given![0] + ' ' + (val as Practitioner).name![0].family,
+            value: (val as Practitioner).id
+          });
+      });
+      setPract(records);
+      setPractMap(map);
+    }
+  }
 
   function dateSelect(info: any) {
     setSelectionInfo(info);
     setCalApi(info.view.calendar);
     modalOpen("A");
+  }
+
+  function handlePick(info: string) {
+    setShiftDetails({id: info});
   }
 
   function handleChange(value: any) {
@@ -57,12 +100,13 @@ const EventsCalendar = () => {
   }
 
   const modalOpen = (val: string) => {
+    practitionerSet();
     setModalVal(val);
     setOpen(true);
   };
 
   const clearValues = () => {
-    setShiftDetails({ employee: "", id: "", contact: "" });
+    setShiftDetails({ id: ""});
   };
 
   const modalClose = () => {
@@ -75,16 +119,16 @@ const EventsCalendar = () => {
   };
 
   const editEvent = () => {
-    currEvent?.setProp("title", shiftDetails.employee);
+    currEvent?.setProp("title", practMap?.get(shiftDetails.id)?.name![0].given![0] + ' ' + practMap?.get(shiftDetails.id)?.name![0].family);
+    currEvent?.setExtendedProp("description", shiftDetails.id);
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     modalOpen("DE");
-    setShiftDetails({
-      employee: clickInfo.event.title,
-      id: clickInfo.event.extendedProps.description.split(" ")[0],
-      contact: clickInfo.event.extendedProps.description.split(" ")[1],
-    });
+    let details = {
+      id: clickInfo.event.extendedProps.description,
+    };
+    setShiftDetails(details);
     setCalApi(clickInfo.view.calendar);
     setEvent(clickInfo.event);
   };
@@ -104,10 +148,10 @@ const EventsCalendar = () => {
     if (calendarApi) {
       calendarApi.addEvent({
         id: "e" + count,
-        title: shiftDetails.employee,
+        title: practMap?.get(shiftDetails.id)?.name![0].given![0] + ' ' + practMap?.get(shiftDetails.id)?.name![0].family,
         start: selectionInfo?.startStr,
         end: selectionInfo?.endStr,
-        description: shiftDetails.id + " " + shiftDetails.contact,
+        description: shiftDetails.id,
       });
       setCount(count + 1);
     } else return;
@@ -133,8 +177,8 @@ const EventsCalendar = () => {
               Adjustments
             </Nav.Item>
             <Dropdown title="About">
-              <Dropdown.Item href='/company'>Company</Dropdown.Item>
-              <Dropdown.Item href='/team'>Team</Dropdown.Item>
+              <Dropdown.Item href="/company">Company</Dropdown.Item>
+              <Dropdown.Item href="/team">Team</Dropdown.Item>
             </Dropdown>
           </Nav>
         }
@@ -166,19 +210,17 @@ const EventsCalendar = () => {
           {modalVal === "A" && (
             <Form fluid onChange={handleChange} formValue={shiftDetails}>
               <FormGroup>
-                <ControlLabel>Employee Name</ControlLabel>
-                <FormControl name="employee" />
-                <HelpBlock>Required</HelpBlock>
+              <ControlLabel>Employee</ControlLabel>
+              <SelectPicker
+                    data={practNames}
+                    onSelect={handlePick}
+                    name="employee"
+                    renderValue={(val) => <FhirHumanName value={practMap?.get(val)?.name![0]} />}
+                  ></SelectPicker>
               </FormGroup>
               <FormGroup>
                 <ControlLabel>Employee ID</ControlLabel>
                 <FormControl name="id" />
-                <HelpBlock>Required</HelpBlock>
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>Contact</ControlLabel>
-                <FormControl name="contact" />
-                <HelpBlock>Required</HelpBlock>
               </FormGroup>
             </Form>
           )}
@@ -190,19 +232,17 @@ const EventsCalendar = () => {
               </Nav>
               <Form fluid onChange={handleChange} formValue={shiftDetails}>
                 <FormGroup>
-                  <ControlLabel>Employee Name</ControlLabel>
-                  <FormControl name="employee" />
-                  <HelpBlock>Required</HelpBlock>
+                <ControlLabel>Employee</ControlLabel>
+                  <SelectPicker
+                    data={practNames}
+                    onSelect={handlePick}
+                    name="employee"
+                    renderValue={(val) => <FhirHumanName value={practMap?.get(val)?.name![0]} />}
+                  ></SelectPicker>
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Employee ID</ControlLabel>
-                  <FormControl name="id" />
-                  <HelpBlock>Required</HelpBlock>
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>Contact</ControlLabel>
-                  <FormControl name="contact" />
-                  <HelpBlock>Required</HelpBlock>
+                  <FormControl name="id" readOnly={true}/>
                 </FormGroup>
               </Form>
             </>
@@ -231,4 +271,4 @@ const EventsCalendar = () => {
   );
 };
 
-export default EventsCalendar;
+export default withFhirDataQuery(EventsCalendar);

@@ -39,7 +39,6 @@ export const PractitionerList: React.FC = () => (
           ID: "identifier[0].value",
           Specialty: (_pract: Practitioner) => (
             practMap.get(_pract.id) != null && <><FhirCodeableConcept value={practMap.get(_pract.id)[0]}></FhirCodeableConcept></>
-            
           ),
           Gender: "gender",
           Contact: "telecom[0].value",

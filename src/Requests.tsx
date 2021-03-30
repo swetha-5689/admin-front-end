@@ -6,6 +6,7 @@ import { AppHeader, FhirHumanName, ResourceListTable } from "@commure/components
 import "./ScheduleService.scss";
 import { FhirDataQuery } from "@commure/components-data";
 import { Bundle, Practitioner, Resource, Schedule } from "@commure/fhir-types/r4/types";
+
 function Requests() {
   const [isOpen, setOpen] = useState(false);
   const [modalVal, setModalVal] = useState(false);

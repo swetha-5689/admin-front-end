@@ -3,6 +3,7 @@ import FullCalendar, {
   CalendarApi,
   DateSelectArg,
   EventApi,
+  EventInput,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -27,7 +28,12 @@ import {
 import { AppHeader, FhirHumanName } from "@commure/components-core";
 import logo from "./assets/logo-qs.png";
 import { EventClickArg } from "@fullcalendar/core";
-import { Bundle, Practitioner } from "@commure/fhir-types/r4/types";
+import {
+  Bundle,
+  Practitioner,
+  Resource,
+  Schedule,
+} from "@commure/fhir-types/r4/types";
 import {
   FhirDataQueryConsumer,
   withFhirDataQuery,
@@ -50,31 +56,41 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const [practMap, setPractMap] = useState<
     Map<string | undefined, Practitioner>
   >();
+  const [schedules, setSchedules] = useState<Schedule[] | undefined>(undefined);
   const { query } = props;
   const [bundle, setBundle] = useState<Bundle | undefined>(undefined);
+  const [events, setEvents] = useState<EventInput[] | undefined>(undefined);
 
   useEffect(() => {
-    query("Practitioner")
+    console.log("here");
+    query("Practitioner?_revinclude=Schedule:actor")
       .then((response: Response) => response.clone().json())
       .then((data) => setBundle(data));
+    practitionerSet();
+    console.log(events);
   }, [query]);
 
   function practitionerSet() {
-    let resources: Practitioner[];
-    if (!bundle) resources = [];
-    else {
-      resources = bundle.entry!.map((value) => value.resource as Practitioner);
+    let practResources: Resource[];
+    let schedResources: Schedule[];
+    if (!bundle) {
+      practResources = [];
+      schedResources = [];
+    } else {
+      practResources = bundle
+        .entry!.map((value) => value.resource as Resource)
+        .filter((value) => value.resourceType === "Practitioner");
       let records = [
         {
           label:
-            (resources[0] as Practitioner).name![0].given![0] +
+            (practResources[0] as Practitioner).name![0].given![0] +
             " " +
-            (resources[0] as Practitioner).name![0].family,
-          value: (resources[0] as Practitioner).id,
+            (practResources[0] as Practitioner).name![0].family,
+          value: (practResources[0] as Practitioner).id,
         },
       ];
       let map = new Map<string | undefined, Practitioner>();
-      resources?.forEach((val, ind, arr) => {
+      practResources?.forEach((val, ind) => {
         map.set((val as Practitioner)?.id, val as Practitioner);
         if (ind >= 1)
           records.push({
@@ -87,6 +103,27 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       });
       setPract(records);
       setPractMap(map);
+      schedResources = bundle
+        .entry!.filter((value) => value.resource?.resourceType === "Schedule")
+        .map((value) => value.resource as Schedule);
+      setSchedules(schedResources);
+      let eventArray: EventInput[];
+      eventArray = [];
+      schedules?.forEach((val) => {
+        eventArray.push({
+          id: val.id,
+          title:
+            practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
+              .given![0] +
+            " " +
+            practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
+              .family,
+          start: val.planningHorizon?.start,
+          end: val.planningHorizon?.end,
+        });
+      });
+      setEvents(eventArray);
+      console.log(eventArray);
     }
   }
 
@@ -210,7 +247,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
         <div>
           <div className="card">
             <FullCalendar
-              initialEvents={INITIAL_EVENTS}
+              events={events}
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               headerToolbar={{
                 left: "prev,next today",

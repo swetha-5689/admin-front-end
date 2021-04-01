@@ -10,7 +10,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
-import { INITIAL_EVENTS } from "./data/events";
 import "./Adjustments.css";
 import {
   Button,
@@ -61,22 +60,31 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const [bundle, setBundle] = useState<Bundle | undefined>(undefined);
   const [events, setEvents] = useState<EventInput[] | undefined>(undefined);
 
+  useEffect(
+    function queryFunction() {
+      query("Practitioner?_revinclude=Schedule:actor")
+        .then((response: Response) => response.clone().json())
+        .then((data) => setBundle(data));
+    },
+    [query]
+  );
+
   useEffect(() => {
-    console.log("here");
-    query("Practitioner?_revinclude=Schedule:actor")
-      .then((response: Response) => response.clone().json())
-      .then((data) => setBundle(data));
     practitionerSet();
-    console.log(events);
-  }, [query]);
+  }, [bundle]);
+
+  useEffect(() => {
+    scheduleSet();
+  }, [practMap])
 
   function practitionerSet() {
     let practResources: Resource[];
-    let schedResources: Schedule[];
     if (!bundle) {
+      console.log("here3");
       practResources = [];
-      schedResources = [];
     } else {
+      console.log("here4");
+      console.log(bundle);
       practResources = bundle
         .entry!.map((value) => value.resource as Resource)
         .filter((value) => value.resourceType === "Practitioner");
@@ -103,28 +111,39 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       });
       setPract(records);
       setPractMap(map);
-      schedResources = bundle
-        .entry!.filter((value) => value.resource?.resourceType === "Schedule")
-        .map((value) => value.resource as Schedule);
-      setSchedules(schedResources);
-      let eventArray: EventInput[];
-      eventArray = [];
-      schedules?.forEach((val) => {
-        eventArray.push({
-          id: val.id,
-          title:
-            practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
-              .given![0] +
-            " " +
-            practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
-              .family,
-          start: val.planningHorizon?.start,
-          end: val.planningHorizon?.end,
-        });
-      });
-      setEvents(eventArray);
-      console.log(eventArray);
+      scheduleSet();
     }
+  }
+  function scheduleSet() {
+    if (!bundle) console.log('no bundle');
+    else {
+      console.log('bundle')
+      let schedResources = bundle.entry!.filter((value) => value.resource?.resourceType === "Schedule").map((value) => value.resource as Schedule);
+      let scheduleArray = schedResources.map((value) => value as Schedule);
+      setSchedules(scheduleArray);
+      eventSet();
+      console.log(schedules)
+    }
+  }
+
+  function eventSet() {
+    let eventArray: EventInput[];
+    eventArray = [];
+    schedules?.forEach((val) => {
+      eventArray.push({
+        id: val.id,
+        description: practMap?.get(val.actor[0].reference?.split("/")[1])?.id,
+        title:
+          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
+            .given![0] +
+          " " +
+          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
+        start: val.planningHorizon?.start,
+        end: val.planningHorizon?.end,
+      });
+    });
+    setEvents(eventArray);
+    console.log(events);
   }
 
   function dateSelect(info: any) {
@@ -241,7 +260,9 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       </>
       <br />
       <FlexboxGrid justify="end" align="middle">
-        <Button color="green">Generate Schedule</Button>
+        <Button color="green" onClick={practitionerSet}>
+          Generate Schedule
+        </Button>
       </FlexboxGrid>
       <>
         <div>

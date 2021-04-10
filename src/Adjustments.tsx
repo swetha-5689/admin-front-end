@@ -4,6 +4,7 @@ import FullCalendar, {
   DateSelectArg,
   EventApi,
   EventInput,
+  EventSourceInput,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -11,15 +12,18 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
 import "./Adjustments.css";
+import EditSchedule from "./EditSchedule";
 import {
   Button,
   ControlLabel,
+  DateRangePicker,
   Dropdown,
   FlexboxGrid,
   Form,
   FormControl,
   FormGroup,
   Icon,
+  InputNumber,
   Modal,
   Nav,
   SelectPicker,
@@ -37,9 +41,11 @@ import {
   FhirDataQueryConsumer,
   withFhirDataQuery,
 } from "@commure/components-data";
+import AddSchedule from "./AddSchedule";
+import DeleteSchedule from "./DeleteSchedule";
+import GenerateSchedule from "./GenerateSchedules";
 
 const EventsCalendar = (props: FhirDataQueryConsumer) => {
-  const [count, setCount] = useState(1);
   const [isOpen, setOpen] = useState(false);
   const [modalVal, setModalVal] = useState("A");
   const [active, setActive] = useState("edit");
@@ -56,9 +62,10 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
     Map<string | undefined, Practitioner>
   >();
   const [schedules, setSchedules] = useState<Schedule[] | undefined>(undefined);
+  const [generateDetails, setGenerateDetails] = useState({dates: [new Date(), new Date()], numSlots: 0});
   const { query } = props;
   const [bundle, setBundle] = useState<Bundle | undefined>(undefined);
-  const [events, setEvents] = useState<EventInput[] | undefined>(undefined);
+  const [events, setEvents] = useState<EventSourceInput[] | undefined>(undefined);
 
   useEffect(
     function queryFunction() {
@@ -68,6 +75,12 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
     },
     [query]
   );
+
+  function queryFunct() {
+    query("Practitioner?_revinclude=Schedule:actor")
+      .then((response: Response) => response.clone().json())
+      .then((data) => setBundle(data));
+  } 
 
   useEffect(() => {
     practitionerSet();
@@ -80,11 +93,8 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   function practitionerSet() {
     let practResources: Resource[];
     if (!bundle) {
-      console.log("here3");
       practResources = [];
     } else {
-      console.log("here4");
-      console.log(bundle);
       practResources = bundle
         .entry!.map((value) => value.resource as Resource)
         .filter((value) => value.resourceType === "Practitioner");
@@ -114,23 +124,25 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       scheduleSet();
     }
   }
+
+  function generateSchedule() {
+    modalOpen("G");
+  }
+  
   function scheduleSet() {
-    if (!bundle) console.log('no bundle');
-    else {
-      console.log('bundle')
+    if (bundle) {
       let schedResources = bundle.entry!.filter((value) => value.resource?.resourceType === "Schedule").map((value) => value.resource as Schedule);
       let scheduleArray = schedResources.map((value) => value as Schedule);
       setSchedules(scheduleArray);
       eventSet();
-      console.log(schedules)
     }
   }
 
   function eventSet() {
-    let eventArray: EventInput[];
-    eventArray = [];
-    schedules?.forEach((val) => {
-      eventArray.push({
+    let eventArrayRequests: EventInput[] = [];
+    let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("priority"));
+    requests?.forEach((val) => {
+      eventArrayRequests.push({
         id: val.id,
         description: practMap?.get(val.actor[0].reference?.split("/")[1])?.id,
         title:
@@ -140,10 +152,40 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
           practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
         start: val.planningHorizon?.start,
         end: val.planningHorizon?.end,
+        type: "request"
       });
     });
-    setEvents(eventArray);
-    console.log(events);
+    let eventArrayScheds: EventInput[] = [];
+    let scheds = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("slot"));
+    scheds?.forEach((val) => {
+      eventArrayScheds.push({
+        id: val.id,
+        description: practMap?.get(val.actor[0].reference?.split("/")[1])?.id,
+        title:
+          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
+            .given![0] +
+          " " +
+          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
+        start: val.planningHorizon?.start,
+        end: val.planningHorizon?.end,
+        type: "slot"
+      });
+    });
+    let eventSource: EventSourceInput[] = [
+    {
+      events: eventArrayRequests,
+      color: 'orange',
+      textColor: 'white',
+      editable: false
+    },
+    {
+      events: eventArrayScheds,
+      color: 'blue',
+      textColor: 'white',
+      editable: true
+    }
+    ];
+    setEvents(eventSource);
   }
 
   function dateSelect(info: any) {
@@ -158,6 +200,10 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
 
   function handleChange(value: any) {
     setShiftDetails(value);
+  }
+
+  function handleGenerateForm(value: any) {
+    setGenerateDetails(value);
   }
 
   function handleSelect(activeKey: string) {
@@ -179,11 +225,11 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
     setOpen(false);
   };
 
-  const deleteEvent = () => {
-    currEvent?.remove();
+  const deleteEvent = (item: any) => {
+    DeleteSchedule(item as Schedule).then(() => queryFunct());
   };
 
-  const editEvent = () => {
+  const editEvent = (item: any) => {
     currEvent?.setProp(
       "title",
       practMap?.get(shiftDetails.id)?.name![0].given![0] +
@@ -191,9 +237,11 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
         practMap?.get(shiftDetails.id)?.name![0].family
     );
     currEvent?.setExtendedProp("description", shiftDetails.id);
+    EditSchedule((item as Schedule), shiftDetails.id).then(() => queryFunct());
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
+    if (clickInfo.event.extendedProps.type === "request") {return false;}
     modalOpen("DE");
     let details = {
       id: clickInfo.event.extendedProps.description,
@@ -206,30 +254,27 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const doAction = () => {
     if (modalVal === "A") {
       addEvent();
-    } else if (active === "delete") {
-      deleteEvent();
-    } else if (active === "edit") {
-      editEvent();
-    }
+    } else if (modalVal === "DE" && active === "delete") {
+      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id)
+      deleteEvent(scheduleItem);
+    } else if (modalVal === "DE" && active === "edit") {
+      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id)
+      editEvent(scheduleItem);
+    } else if (modalVal === "G"){ 
+      generateSlots();
+     }
     modalClose();
   };
 
   const addEvent = () => {
-    if (calendarApi) {
-      calendarApi.addEvent({
-        id: "e" + count,
-        title:
-          practMap?.get(shiftDetails.id)?.name![0].given![0] +
-          " " +
-          practMap?.get(shiftDetails.id)?.name![0].family,
-        start: selectionInfo?.startStr,
-        end: selectionInfo?.endStr,
-        description: shiftDetails.id,
-      });
-      setCount(count + 1);
-    } else return;
-    calendarApi.unselect();
+    AddSchedule(shiftDetails.id, selectionInfo?.startStr, selectionInfo?.endStr).then(() => queryFunct());
+    calendarApi?.unselect();
   };
+
+  const generateSlots = () => {
+    let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("priority"));
+    GenerateSchedule(generateDetails, requests, practMap);
+  }
 
   return (
     <>
@@ -260,7 +305,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       </>
       <br />
       <FlexboxGrid justify="end" align="middle">
-        <Button color="green" onClick={practitionerSet}>
+        <Button color="green" onClick={generateSchedule}>
           Generate Schedule
         </Button>
       </FlexboxGrid>
@@ -268,7 +313,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
         <div>
           <div className="card">
             <FullCalendar
-              events={events}
+              eventSources={events}
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               headerToolbar={{
                 left: "prev,next today",
@@ -348,6 +393,23 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
                 </Nav>
                 <br></br>
                 <p>Are you sure you want to delete this shift?</p>
+              </>
+            )}
+            {modalVal === "G" && (
+              <>
+                <Form fluid onChange={handleGenerateForm} formValue={generateDetails}>
+                  <FormGroup>
+                    <ControlLabel>Select Dates</ControlLabel>
+                      <FormControl
+                        name="dates"
+                        accepter={DateRangePicker}
+                      ></FormControl>
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Number of Employees per Shift</ControlLabel>
+                    <FormControl name="numSlots" accepter={InputNumber}></FormControl>
+                  </FormGroup>
+                </Form>
               </>
             )}
           </Modal.Body>

@@ -48,7 +48,14 @@ import {
 import AddSchedule from "./AddSchedule";
 import DeleteSchedule from "./DeleteSchedule";
 import GenerateSchedule from "./GenerateSchedules";
-import moment from 'moment'
+import moment from 'moment';
+import RequestSender from "./RequestSender";
+import EventSourceCreator from "./EventSourceCreator";
+const {
+  allowedMaxDays,
+  beforeToday,
+  combine
+} = DateRangePicker
 
 const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const [isOpen, setOpen] = useState(false);
@@ -154,52 +161,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   }
 
   function eventSet() {
-    let eventArrayRequests: EventInput[] = [];
-    let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("priority"));
-    requests?.forEach((val) => {
-      eventArrayRequests.push({
-        id: val.id,
-        description: practMap?.get(val.actor[0].reference?.split("/")[1])?.id,
-        title:
-          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
-            .given![0] +
-          " " +
-          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
-        start: val.planningHorizon?.start,
-        end: val.planningHorizon?.end,
-        type: "request"
-      });
-    });
-    let eventArrayScheds: EventInput[] = [];
-    let scheds = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("slot"));
-    scheds?.forEach((val) => {
-      eventArrayScheds.push({
-        id: val.id,
-        description: practMap?.get(val.actor[0].reference?.split("/")[1])?.id,
-        title:
-          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0]
-            .given![0] +
-          " " +
-          practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
-        start: val.planningHorizon?.start,
-        end: val.planningHorizon?.end,
-        type: "slot"
-      });
-    });
-    let eventSource: EventSourceInput[] = [
-      {
-        events: eventArrayRequests,
-        color: 'orange',
-        textColor: 'white',
-        editable: false
-      },
-      {
-        events: eventArrayScheds,
-        color: 'blue',
-        textColor: 'white',
-        editable: true
-      }
-    ];
+    let eventSource: EventSourceInput[] = EventSourceCreator(schedules, practMap);
     setEvents(eventSource);
   }
 
@@ -222,6 +184,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   }
 
   function handleGenerateForm(value: any) {
+    console.log(value);
     setGenerateDetails(value);
   }
 
@@ -259,6 +222,10 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
     EditSchedule((item as Schedule), shiftDetails.id).then(() => queryFunct());
   };
 
+  const sendRequestDecision = (item: any) => {
+    RequestSender((item as Schedule), requestDecision.decision).then(() => queryFunct());
+  };
+
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (clickInfo.event.extendedProps.type === "request") { modalOpen("R"); }
     else { modalOpen("DE"); }
@@ -274,17 +241,17 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
     if (modalVal === "A") {
       addEvent();
     } else if (modalVal === "DE" && active === "delete") {
-      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id)
+      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id);
       deleteEvent(scheduleItem);
     } else if (modalVal === "DE" && active === "edit") {
-      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id)
+      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id);
       editEvent(scheduleItem);
     } else if (modalVal === "G") {
+      console.log(generateDetails);
       generateSlots();
-    }
-    else if (modalVal === "R") {
-      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id)
-      editEvent(scheduleItem);;
+    } else if (modalVal === "R") {
+      let scheduleItem = schedules?.find((val) => val.id === currEvent?.id);
+      sendRequestDecision(scheduleItem);
     }
     modalClose();
   };
@@ -295,7 +262,9 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   };
 
   const generateSlots = () => {
-    let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("priority"));
+    console.log(generateDetails);
+    let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("approve") 
+    && moment(val?.planningHorizon?.start).isBetween(generateDetails.dates[0], generateDetails.dates[1]));
     GenerateSchedule(generateDetails, requests, practMap);
   }
 
@@ -327,10 +296,10 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
         />
       </>
       <br />
-      <FlexboxGrid justify="end"align="middle">
-      <Whisper placement="left" trigger="hover" speaker={speaker}>
-        <Button>Help</Button>
-      </Whisper>
+      <FlexboxGrid justify="end" align="middle">
+        <Whisper placement="left" trigger="hover" speaker={speaker}>
+          <Button>Help</Button>
+        </Whisper>
         <Button color="green" onClick={generateSchedule}>
           Generate Schedule
         </Button>
@@ -429,6 +398,8 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
                     <FormControl
                       name="dates"
                       accepter={DateRangePicker}
+                      disabledDate={combine(allowedMaxDays(30), beforeToday())}
+
                     ></FormControl>
                   </FormGroup>
                   <FormGroup>
@@ -442,7 +413,9 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
               <>
                 <Form fluid onChange={requestStatus} formValue={requestDecision}>
                   <ControlLabel>
-                    Approve Request for {currEvent?.title} on {moment(currEvent?.startStr).format('MMMM Do YYYY, h:mm:ss a')} to {moment(currEvent?.endStr).format('MMMM Do YYYY, h:mm:ss a')}
+                    Are you sure you want to {requestDecision.decision} the level {schedules?.find((val) => val.id === currEvent?.id)?.identifier![0]?.type?.text?.substr(-1)} 
+                    {" "}request for {currEvent?.title} on {moment(currEvent?.startStr).format('MMMM Do YYYY, h:mm:ss a')} {" "}
+                    to {moment(currEvent?.endStr).format('MMMM Do YYYY, h:mm:ss a')}{"?"}
                   </ControlLabel>
                   <FormGroup>
                     <FormControl name="decision" accepter={RadioGroup}>

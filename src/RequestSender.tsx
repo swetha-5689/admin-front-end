@@ -3,7 +3,7 @@ import { Schedule } from "@commure/fhir-types/r4/types";
 import SMARTClient from "@commure/smart-core";
 import { smartConfig } from "./config";
 
-const DeleteSchedule = async (schedule: Schedule) => {
+const RequestSender = async (schedule: Schedule, decision: string) => {
   const smartClient = new SMARTClient(smartConfig);
   if (
     !process.env.REACT_APP_CLIENT_ID ||
@@ -21,7 +21,8 @@ const DeleteSchedule = async (schedule: Schedule) => {
 
   if (schedule.id) {
     let id = schedule.id;
-    schedule!.identifier![0].type!.text = "priority1";
+    let priority = schedule!.identifier![0].type!.text?.substr(-1);
+    schedule!.identifier![0].type!.text = decision + priority;
     const sched = await fhirRest.update({
       resourceType: "Schedule",
       id: id,
@@ -30,4 +31,4 @@ const DeleteSchedule = async (schedule: Schedule) => {
   }
 };
 
-export default DeleteSchedule;
+export default RequestSender;

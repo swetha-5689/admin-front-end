@@ -184,7 +184,6 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   }
 
   function handleGenerateForm(value: any) {
-    console.log(value);
     setGenerateDetails(value);
   }
 
@@ -247,7 +246,6 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
       let scheduleItem = schedules?.find((val) => val.id === currEvent?.id);
       editEvent(scheduleItem);
     } else if (modalVal === "G") {
-      console.log(generateDetails);
       generateSlots();
     } else if (modalVal === "R") {
       let scheduleItem = schedules?.find((val) => val.id === currEvent?.id);
@@ -262,10 +260,9 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   };
 
   const generateSlots = () => {
-    console.log(generateDetails);
     let requests = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("approve") 
-    && moment(val?.planningHorizon?.start).isBetween(generateDetails.dates[0], generateDetails.dates[1]));
-    GenerateSchedule(generateDetails, requests, practMap);
+    && moment(val?.planningHorizon?.end).isSameOrAfter(Date.now()));
+    GenerateSchedule(generateDetails, requests, practMap).then(() => queryFunct());
   }
 
   return (
@@ -394,12 +391,12 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
               <>
                 <Form fluid onChange={handleGenerateForm} formValue={generateDetails}>
                   <FormGroup>
-                    <ControlLabel>Select Dates</ControlLabel>
+                    <ControlLabel>Select Dates: {moment(generateDetails.dates[0]).format('MMMM Do YYYY')} {" - "} 
+                    {moment(generateDetails.dates[1]).format('MMMM Do YYYY')}</ControlLabel>
                     <FormControl
                       name="dates"
                       accepter={DateRangePicker}
                       disabledDate={combine(allowedMaxDays(30), beforeToday())}
-
                     ></FormControl>
                   </FormGroup>
                   <FormGroup>

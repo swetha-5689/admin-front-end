@@ -21,7 +21,7 @@ const DeleteSchedule = async (schedule: Schedule) => {
 
   if (schedule.id) {
     let id = schedule.id;
-    schedule!.identifier![0].type!.text = "priority1";
+    schedule!.identifier![0].type!.text = "canceled";
     const sched = await fhirRest.update({
       resourceType: "Schedule",
       id: id,

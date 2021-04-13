@@ -82,7 +82,7 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
   const speaker = (
     <Popover>
       Dark Blue: Current Schedule <br></br>
-      Gray: Cancelled Schedule <br></br>
+      Gray: Canceled Schedule <br></br>
       Green: Approved Request<br></br>
       Orange: Pending Request <br></br>
       Red: Rejected Request<br></br>
@@ -279,7 +279,6 @@ const EventsCalendar = (props: FhirDataQueryConsumer) => {
               <Nav.Item href="/home" icon={<Icon icon="home" />}>
                 Home
               </Nav.Item>
-              <Nav.Item href="/requests">Requests</Nav.Item>
               <Nav.Item href="/employee">Employees</Nav.Item>
               <Nav.Item href="/adjustments" active={true}>
                 Adjustments

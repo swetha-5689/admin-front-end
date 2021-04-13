@@ -22,7 +22,6 @@ function Employee() {
         <h6>Quick Shift</h6>
       </Nav.Item>
       <Nav.Item href='/home' icon={<Icon icon="home" />}>Home</Nav.Item>
-      <Nav.Item href='/requests'>Requests</Nav.Item>
       <Nav.Item href='/employee' active={true}>Employees</Nav.Item>
       
       <Nav.Item href='/adjustments'>Adjustments</Nav.Item>

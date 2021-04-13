@@ -71,7 +71,7 @@ function EventSourceCreator(schedules: Schedule[] | undefined, practMap: any) {
       });
     });
     let eventArrayCanceled: EventInput[] = [];
-    let canceled = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("canceled"));
+    let canceled = schedules?.filter((val) => val?.identifier![0].type?.text?.startsWith("cancel"));
     canceled?.forEach((val) => {
       eventArrayCanceled.push({
         id: val.id,

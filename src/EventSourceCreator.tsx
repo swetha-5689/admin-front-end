@@ -19,7 +19,8 @@ function EventSourceCreator(schedules: Schedule[] | undefined, practMap: any) {
           practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
         start: val.planningHorizon?.start,
         end: val.planningHorizon?.end,
-        type: "request"
+        type: "request",
+        allDay: true
       });
     });
     let eventArrayScheds: EventInput[] = [];
@@ -51,7 +52,8 @@ function EventSourceCreator(schedules: Schedule[] | undefined, practMap: any) {
           practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
         start: val.planningHorizon?.start,
         end: val.planningHorizon?.end,
-        type: "request"
+        type: "request",
+        allDay: true
       });
     });
     let eventArrayApproved: EventInput[] = [];
@@ -67,7 +69,8 @@ function EventSourceCreator(schedules: Schedule[] | undefined, practMap: any) {
           practMap?.get(val.actor[0].reference?.split("/")[1])?.name![0].family,
         start: val.planningHorizon?.start,
         end: val.planningHorizon?.end,
-        type: "request"
+        type: "request",
+        allDay: true
       });
     });
     let eventArrayCanceled: EventInput[] = [];
@@ -97,25 +100,25 @@ function EventSourceCreator(schedules: Schedule[] | undefined, practMap: any) {
         events: eventArrayScheds,
         color: 'blue',
         textColor: 'white',
-        editable: true
+        editable: false
       },
       {
         events: eventArrayApproved,
         color: 'Green',
         textColor: "white",
-        editable: true
+        editable: false
       },
       {
         events: eventArrayRejected,
         color: 'Red',
         textColor: "white",
-        editable: true
+        editable: false
       },
       {
         events: eventArrayCanceled,
         color: 'silver',
         textColor: "black",
-        editable: true
+        editable: false
       }
     ];
     return eventSource;
